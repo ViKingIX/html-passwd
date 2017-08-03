@@ -1,6 +1,6 @@
 function reset_form()
 {
-	$("#msg").css({'class': ''}).html('');
+	$("#msg").prop('class', '').html('');
 	$('#form').children().removeClass('has-danger').children().removeClass('form-control-danger');
 	return;
 }
@@ -69,14 +69,12 @@ $(document).ready(function() {
 			new_pass2 = data[3].value;
 		let data2 = {reset, user, old_pass, new_pass, new_pass2};
 
-		console.log(reset, user, old_pass, new_pass, new_pass2);
 		if (validate(reset, user, old_pass, new_pass, new_pass2))
 			return;
 		let jj = JSON.stringify(data2);
 		$.post('pam.php', data2, function (data) {
 			console.log('pam.php: ', data);
 			let [ret, msg] = JSON.parse(data);
-			console.log(ret, msg);
 			if (ret)
 				$('#msg').prop('class', 'alert alert-danger').html(msg);
 			else
