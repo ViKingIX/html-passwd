@@ -30,7 +30,7 @@ expect {
 	}
 	default {
 		send_user "Unknown error\n"
-		exit 6
+		exit 7
 	}
 }
 expect {
@@ -39,6 +39,6 @@ expect {
 	}
 	"Password has been already used. Choose another." {
 		send_user "Match password history\n"
-		exit 5
+		exit 6
 	}
 }
