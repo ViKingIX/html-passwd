@@ -16,7 +16,7 @@ expect {
 		send "$new_pass\r"
 	}
 	"passwd: Authentication token manipulation error" {
-		send_user "wrong password\n"
+		send_user "Wrong password\n"
 		exit 4
 	}
 }
@@ -24,18 +24,21 @@ expect {
 	"Retype new password:" {
 		send "$new_pass\r"
 	}
-	"BAD PASSWORD: The password is the same as the old one" {
-		send_user "match password history\n"
-		exit 5
-	}
-	"BAD PASSWORD: The password is just rotated old one" {
-		send_user "match password history\n"
+	"BAD PASSWORD:" {
+		send_user "Bad password\n"
 		exit 5
 	}
 	default {
-		send_user "unknown error\n"
+		send_user "Unknown error\n"
 		exit 6
 	}
 }
-expect "passwd: password updated successfully"
-exit 0
+expect {
+	"passwd: password updated successfully" {
+		exit 0
+	}
+	"Password has been already used. Choose another." {
+		send_user "Match password history\n"
+		exit 5
+	}
+}
