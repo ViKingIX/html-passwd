@@ -19,7 +19,7 @@ function validate(reset, user, old_pass, new_pass, new_pass2)
 	if (reset)
 		return 0;
 	let pass_inval = false;
-	for (let id of ['old_pass', 'new_pass', 'new_pass2'])
+	for (let id of ['old_pass', 'new_pass',])
 		if (!pass_pat.exec(eval(id)))
 		{
 			pass_inval = true;
@@ -28,24 +28,6 @@ function validate(reset, user, old_pass, new_pass, new_pass2)
 		}
 	if (pass_inval)
 		return 2;
-	/*
-	if (!pass_pat.exec(old_pass))
-	{
-		$('#old_pass').addClass('form-control-danger');
-		$('#old_pass').parent().addClass('has-danger');
-	}
-	if (!pass_pat.exec(new_pass))
-	{
-		$('#new_pass').addClass('form-control-danger');
-		$('#new_pass').parent().addClass('has-danger');
-	}
-	if (!pass_pat.exec(new_pass2))
-	{
-		$('#new_pass2').addClass('form-control-danger');
-		$('#new_pass2').parent().addClass('has-danger');
-		return 2;
-	}
-	*/
 	if (new_pass != new_pass2)
 	{
 		$('#new_pass2').addClass('form-control-danger');
