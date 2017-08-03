@@ -1,0 +1,41 @@
+#!/usr/bin/expect -f
+
+log_user 0
+exp_internal 0
+
+# initialization
+set old_pass [lindex $argv 0]
+set new_pass [lindex $argv 1]
+
+spawn passwd
+
+expect "(current) UNIX password: "
+send "$old_pass\r"
+expect {
+	"New password:" {
+		send "$new_pass\r"
+	}
+	"passwd: Authentication token manipulation error" {
+		send_user "wrong password\n"
+		exit 4
+	}
+}
+expect {
+	"Retype new password:" {
+		send "$new_pass\r"
+	}
+	"BAD PASSWORD: The password is the same as the old one" {
+		send_user "match password history\n"
+		exit 5
+	}
+	"BAD PASSWORD: The password is just rotated old one" {
+		send_user "match password history\n"
+		exit 5
+	}
+	default {
+		send_user "unknown error\n"
+		exit 6
+	}
+}
+expect "passwd: password updated successfully"
+exit 0
