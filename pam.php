@@ -53,7 +53,7 @@ else
 	{
 		$new_pass = exec('pwgen -syn 12 1');
 		$new_pass_escaped = escapeshellarg($new_pass);
-		$out = shell_exec("echo $user:$new_pass_escaped | sudo chpasspwd");
+		$out = shell_exec("echo $user:$new_pass_escaped | sudo chpasswd");
 
 		$mail = new PHPMailer;
 		$mail->isSMTP();
