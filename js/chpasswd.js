@@ -53,7 +53,6 @@ $(document).ready(function() {
 
 		if (validate(reset, user, old_pass, new_pass, new_pass2))
 			return;
-		let jj = JSON.stringify(data2);
 		$.post('pam.php', data2, function (data) {
 			console.log('pam.php: ', data);
 			let [ret, msg] = JSON.parse(data);
