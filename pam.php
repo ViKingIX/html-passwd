@@ -1,4 +1,7 @@
 <?php
+require 'lib/phpmailer/PHPMailerAutoload.php';
+require 'config.php';
+
 function chpasswd($user, $old_pass, $new_pass)
 {
 	exec("sudo -u $user ./tools/expect_passwd $old_pass $new_pass", $out, $ret);
@@ -45,15 +48,31 @@ if (!$reset)
 }
 else
 {
-	// user not exist
-	if (preg_match('', exec("id $user", $out, $ret)))
-		$data = [1, 'Wrong user!'];
-	else
+	list($ret, $msg) = validate($reset, $user);
+	if (!$ret)
 	{
-		$new_pass = exec('pwgen -sy 12 1');
-		$out = shell_exec("echo $user:$new_pass | sudo chpasspwd");
-		
+		$new_pass = exec('pwgen -syn 12 1');
+		$new_pass_escaped = escapeshellarg($new_pass);
+		$out = shell_exec("echo $user:$new_pass_escaped | sudo chpasspwd");
+
+		$mail = new PHPMailer;
+		$mail->isSMTP();
+		$mail->Host = $MAIL_SERVER;
+		$mail->Port = $MAIL_PORT;
+
+		$mail->setFrom($MAIL_FROM, $MAIL_FROM_NAME);
+		$mail->addAddress("$user@$MAILTO_DOMAIN", '');
+		$mail->Subject = 'TACACS+ Password Recovery';
+		$mail->isHTML(true);
+		$mail->Body = "Dear $user,<br><br>\n"
+					. "<p style=\"padding-left: 2em\">Your new password is <span style=\"color: red\"><strong><tt>$new_pass</tt></strong></span></p>";
+		if (!$mail->send())
+			$data = [8, $mail->ErrorInfo];
+		else
+			$data = [0, 'Success!'];
 	}
+	else
+		$data = [$ret, $msg];
 }
 echo json_encode($data);
 ?>
