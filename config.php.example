@@ -1,0 +1,7 @@
+<?php
+$MAIL_SERVER = 'localhost';
+$MAIL_PORT = 25;
+$MAIL_FROM = 'root@example.com';
+$MAIL_FROM_NAME = '';
+$MAILTO_DOMAIN = 'example.com';
+?>
