@@ -5,6 +5,7 @@ require 'config.php';
 function chpasswd($user, $old_pass, $new_pass)
 {
 	exec("sudo -u $user ./tools/expect_passwd $old_pass $new_pass", $out, $ret);
+	$out = implode("\n", $out);
 	return [$ret, $out];
 }
 
@@ -25,9 +26,9 @@ function validate($reset, $user, $old_pass = '', $new_pass = '', $new_pass2 = ''
 		if (!preg_match($pass_pat, $old_pass))
 			return [2, 'Invalid old password'];
 		if (!preg_match($pass_pat2, $new_pass))
-			return [2, 'Invalid new password'];
+			return [3, 'Invalid new password'];
 		if ($new_pass != $new_pass2)
-			return [3, 'Passwords do not match'];
+			return [4, 'Passwords do not match'];
 	}
 	return [0, ''];
 }
@@ -67,7 +68,7 @@ else
 		$mail->Body = "Dear $user,<br><br>\n"
 					. "<p style=\"padding-left: 2em\">Your new password is <span style=\"color: red\"><strong><tt>$new_pass</tt></strong></span></p>";
 		if (!$mail->send())
-			$data = [8, $mail->ErrorInfo];
+			$data = [1, $mail->ErrorInfo];
 		else
 			$data = [0, 'Success!'];
 	}

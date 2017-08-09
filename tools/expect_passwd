@@ -17,7 +17,7 @@ expect {
 	}
 	"passwd: Authentication token manipulation error" {
 		send_user "Wrong password\n"
-		exit 4
+		exit 1
 	}
 }
 expect {
@@ -26,11 +26,11 @@ expect {
 	}
 	"BAD PASSWORD:" {
 		send_user "Bad password\n"
-		exit 5
+		exit 2
 	}
 	default {
 		send_user "Unknown error\n"
-		exit 7
+		exit 4
 	}
 }
 expect {
@@ -39,6 +39,6 @@ expect {
 	}
 	"Password has been already used. Choose another." {
 		send_user "Match password history\n"
-		exit 6
+		exit 3
 	}
 }
