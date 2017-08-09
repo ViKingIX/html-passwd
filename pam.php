@@ -5,7 +5,7 @@ function chpasswd($user, $old_pass, $new_pass)
 	return [$ret, $out];
 }
 
-function validate($reset, $user, $old_pass, $new_pass, $new_pass2, &$msg)
+function validate($reset, $user, $old_pass = '', $new_pass = '', $new_pass2 = '')
 {
 	$id_pat = '/^[a-z][a-z0-9\-_]+$/';
 	$id_pat2 = "/^uid=\d+($user) gid=\d+($user)";
@@ -13,35 +13,20 @@ function validate($reset, $user, $old_pass, $new_pass, $new_pass2, &$msg)
 	$pass_pat2 = '/^(?=.{12,})(?=.*[A-Z])(?=.*\d)(?=.*[[:punct:]])[\w[:punct:]]+$/';
 
 	if (!preg_match($id_pat, $user))
-	{
-		$msg = 'Invalid username';
-		return 1;
-	}
+		return [1, 'Invalid username'];
 	exec("id $user", $out, $ret);
 	if ($ret)
-	{
-		$msg = 'Wrong username';
-		return 1;
-	}
+		return [1, 'Wrong username'];
 	if (!$reset)
 	{
 		if (!preg_match($pass_pat, $old_pass))
-		{
-			$msg = 'Invalid old password';
-			return 2;
-		}
+			return [2, 'Invalid old password'];
 		if (!preg_match($pass_pat2, $new_pass))
-		{
-			$msg = 'Invalid new password';
-			return 2;
-		}
+			return [2, 'Invalid new password'];
 		if ($new_pass != $new_pass2)
-		{
-			$msg = 'Passwords do not match';
-			return 3;
-		}
+			return [3, 'Passwords do not match'];
 	}
-	return 0;
+	return [0, ''];
 }
 
 $reset = $_POST['reset'];
@@ -52,7 +37,7 @@ if (!$reset)
 	$new_pass = $_POST['new_pass'];
 	$new_pass2 = $_POST['new_pass2'];
 
-	$ret = validate($reset, $user, $old_pass, $new_pass, $new_pass2, $msg);
+	list($ret, $msg) = validate($reset, $user, $old_pass, $new_pass, $new_pass2);
 	if (!$ret)
 		$data = chpasswd($user, $old_pass, $new_pass);
 	else
