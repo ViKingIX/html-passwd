@@ -30,9 +30,9 @@ function validate($reset, $user, $old_pass = '', $new_pass = '', $new_pass2 = ''
 }
 
 $reset = $_POST['reset'];
+$user = $_POST['user'];
 if (!$reset)
 {
-	$user = $_POST['user'];
 	$old_pass = $_POST['old_pass'];
 	$new_pass = $_POST['new_pass'];
 	$new_pass2 = $_POST['new_pass2'];
