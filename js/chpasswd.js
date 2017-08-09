@@ -8,33 +8,36 @@ function reset_form()
 function validate(reset, user, old_pass, new_pass, new_pass2)
 {
 	var id_pat = /^[a-z][a-z0-9_-]+$/;
-	var pass_pat = /^[\w``~!@#$%^&*()\-_=+[{\]}\\|;:'",<.>\/?]+$/;
+	var pass_pat = /^[\w`~!@#$%^&*()\-_=+[{\]}\\|;:'",<.>\/?]+$/;
 
 	if (!id_pat.exec(user))
 	{
-		$('#user').addClass('form-control-danger');
-		$('#user').parent().addClass('has-danger');
-		return 1;
+		$('input[name=user]').addClass('form-control-danger');
+		$('input[name=user]').parent().addClass('has-danger');
+		return [1, 'Invalid username'];
 	}
 	if (reset)
-		return 0;
-	let pass_inval = false;
-	for (let id of ['old_pass', 'new_pass',])
-		if (!pass_pat.exec(eval(id)))
-		{
-			pass_inval = true;
-			$('#' + id).addClass('form-control-danger');
-			$('#' + id).parent().addClass('has-danger');
-		}
-	if (pass_inval)
-		return 2;
+		return [0, ''];
+	if (!pass_pat.exec(old_pass))
+	{
+		console.log(`old pass: ${old_pass}`);
+		$('input[name=old_pass]').addClass('form-control-danger');
+		$('input[name=old_pass]').parent().addClass('has-danger');
+		return [2, 'Invalid old password'];
+	}
+	if (!pass_pat.exec(new_pass))
+	{
+		$('input[name=new_pass]').addClass('form-control-danger');
+		$('input[name=new_pass]').parent().addClass('has-danger');
+		return [3, 'Invalid new password'];
+	}
 	if (new_pass != new_pass2)
 	{
-		$('#new_pass2').addClass('form-control-danger');
-		$('#new_pass2').parent().addClass('has-danger');
-		return 3;
+		$('input[name=new_pass2]').addClass('form-control-danger');
+		$('input[name=new_pass2]').parent().addClass('has-danger');
+		return [4, 'Passwords do not match'];
 	}
-	return 0;
+	return [0, ''];
 }
 
 $(document).ready(function() {
@@ -51,8 +54,12 @@ $(document).ready(function() {
 			new_pass2 = data[3].value;
 		let data2 = {reset, user, old_pass, new_pass, new_pass2};
 
-		if (validate(reset, user, old_pass, new_pass, new_pass2))
+		let [ret, msg] = validate(reset, user, old_pass, new_pass, new_pass2);
+		if (ret)
+		{
+			$('#msg').prop('class', 'alert alert-danger').html(msg);
 			return;
+		}
 		$.post('pam.php', data2, function (data) {
 			console.log('pam.php: ', data);
 			let [ret, msg] = JSON.parse(data);
